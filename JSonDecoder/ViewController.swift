@@ -8,11 +8,17 @@
 
 import UIKit
 
-struct Course {
-    let id: Int
-    let name: String
-    let link : String
-    let imageURL : String
+struct websiteDescription: Decodable {
+    let name: String?
+    let description: String?
+    let courses : [Course]?
+}
+
+struct Course: Decodable{
+    let id: Int?
+    let name: String?
+    let link : String?
+    let imageUrl : String?
 }
 
 class ViewController: UIViewController {
@@ -20,15 +26,22 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let jsonURL = "http://api.letsbuildthatapp.com/jsondecodable/courses"
+        let jsonURL = "http://api.letsbuildthatapp.com/jsondecodable/website_description"
         guard let url = URL(string: jsonURL) else {return}
        
         
         URLSession.shared.dataTask(with: url) { (data, response, Error) in
             guard let data = data else {return}
-            let dataAsString = String(data: data, encoding: String.Encoding.utf8)
-            print(dataAsString)
-            print("Do stuff")
+            
+            do {
+                let websiteDescriptions = try JSONDecoder().decode(websiteDescription.self, from: data)
+                print(websiteDescriptions)
+                //let json = try JSONSerialization.jsonObject(with: data, options:  JSONSerialization.ReadingOptions.mutableContainers)
+               // print(json)
+            } catch let jsonErr {
+                print(jsonErr)
+            }
+            
         }.resume()
  
         
